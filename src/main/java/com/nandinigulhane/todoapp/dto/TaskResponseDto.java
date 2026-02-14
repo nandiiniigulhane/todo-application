@@ -1,5 +1,6 @@
 package com.nandinigulhane.todoapp.dto;
 
+import java.time.LocalDate;
 import lombok.Data;
 
 @Data
@@ -11,4 +12,6 @@ public class TaskResponseDto {
     private String description;
     
     private boolean completed;
+
+    private LocalDate createdAt;
 }

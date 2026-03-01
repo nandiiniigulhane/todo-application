@@ -27,7 +27,6 @@ function App() {
     fetchTasks();
   }, []);
 
-  // POST
   const addTask = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -48,7 +47,6 @@ function App() {
     fetchTasks();
   };
 
-  // DELETE
   const deleteTask = async (id: number) => {
     await fetch(`${API_URL}/${id}`, {
       method: "DELETE",
@@ -57,7 +55,6 @@ function App() {
     fetchTasks();
   };
 
-  // PUT (toggle complete)
   const toggleComplete = async (task: Task) => {
     await fetch(`${API_URL}/${task.id}`, {
       method: "PUT",

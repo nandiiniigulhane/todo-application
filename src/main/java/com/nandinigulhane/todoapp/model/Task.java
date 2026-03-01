@@ -2,6 +2,7 @@ package com.nandinigulhane.todoapp.model;
 
 import java.time.LocalDate;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -26,9 +27,10 @@ public class Task {
 
     private boolean completed;
 
+    @Column(name = "created_at")
     private LocalDate createdAt;
 
-    public Task(){
+    public Task() {
         createdAt = LocalDate.now();
     }
 

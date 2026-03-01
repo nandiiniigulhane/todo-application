@@ -3,6 +3,7 @@ package com.nandinigulhane.todoapp.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +18,7 @@ import com.nandinigulhane.todoapp.dto.TaskRequestDtoUpdate;
 import com.nandinigulhane.todoapp.dto.TaskResponseDto;
 import com.nandinigulhane.todoapp.service.TaskService;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/")
 public class TaskController {

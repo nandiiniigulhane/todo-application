@@ -39,6 +39,7 @@ function App() {
         title,
         description,
         completed: false,
+        createdAt: new Date().toISOString(),
       }),
     });
 
@@ -72,19 +73,24 @@ function App() {
 
   return (
     <div className="container">
-      <h1 className="title">Task Manager</h1>
+      <header className="app-header">
+        <h1 className="title">Task Manager</h1>
+        <p className="subtitle">
+          Stay organized, focused, and get things done.
+        </p>
+      </header>
 
-      {/* Add Task Card */}
       <form onSubmit={addTask} className="create-card">
         <div className="create-header">
-          <span className="create-icon">📝</span>
+          <div className="icon-wrapper">✨</div>
           <h2>Create a Task</h2>
         </div>
 
         <div className="input-group">
-          <label>Task Title</label>
+          <label htmlFor="task-title">Task Title</label>
           <input
-            placeholder="Enter task title..."
+            id="task-title"
+            placeholder="What needs to be done?"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
@@ -92,9 +98,10 @@ function App() {
         </div>
 
         <div className="input-group">
-          <label>Description</label>
+          <label htmlFor="task-desc">Description</label>
           <input
-            placeholder="Optional description..."
+            id="task-desc"
+            placeholder="Add some details... (optional)"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
@@ -107,50 +114,67 @@ function App() {
         </div>
       </form>
 
-      {/* Empty State */}
-      {tasks.length === 0 && <div className="empty-state">No tasks yet</div>}
+      <div className="task-list-container">
+        {tasks.length === 0 && (
+          <div className="empty-state">
+            <span className="empty-icon">📂</span>
+            <p>No tasks yet. Create one above to get started!</p>
+          </div>
+        )}
 
-      {/* Task List */}
-      {tasks.map((task) => (
-        <div className="task-card" key={task.id}>
-          <div className="task-top">
-            <div className="task-left">
-              <input
-                type="checkbox"
-                checked={task.completed}
-                onChange={() => toggleComplete(task)}
-                className="checkbox"
-              />
+        {tasks.map((task) => (
+          <div
+            className={`task-card ${task.completed ? "task-completed" : ""}`}
+            key={task.id}
+          >
+            <div className="task-content">
+              <div className="checkbox-wrapper">
+                <input
+                  type="checkbox"
+                  checked={task.completed}
+                  onChange={() => toggleComplete(task)}
+                  className="custom-checkbox"
+                />
+              </div>
 
-              <div>
-                <h3
-                  className={`task-title ${
-                    task.completed ? "completed-text" : ""
-                  }`}
-                >
-                  {task.title}
-                </h3>
-
-                <p className="task-desc">{task.description}</p>
+              <div className="task-details">
+                <h3 className="task-title">{task.title}</h3>
+                {task.description && (
+                  <p className="task-desc">{task.description}</p>
+                )}
               </div>
             </div>
 
-            <div className="task-actions">
-              <button className="edit-btn">✏️</button>
-              <button
-                className="delete-btn"
-                onClick={() => deleteTask(task.id)}
-              >
-                🗑️
-              </button>
+            <div className="task-meta">
+              <span className="task-date">
+                {task.createdAt
+                  ? new Date(task.createdAt).toLocaleDateString(undefined, {
+                      month: "short",
+                      day: "numeric",
+                    })
+                  : "Just now"}
+              </span>
+              <div className="task-actions">
+                <button
+                  type="button"
+                  className="action-btn edit-btn"
+                  title="Edit task"
+                >
+                  ✏️
+                </button>
+                <button
+                  type="button"
+                  className="action-btn delete-btn"
+                  onClick={() => deleteTask(task.id)}
+                  title="Delete task"
+                >
+                  🗑️
+                </button>
+              </div>
             </div>
           </div>
-
-          <div className="task-footer">
-            Created: {new Date(task.createdAt).toLocaleDateString()}
-          </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }

@@ -52,7 +52,7 @@ function App() {
       method: "DELETE",
     });
 
-    fetchTasks();
+    setTasks((prev) => prev.filter((task) => task.id !== id));
   };
 
   const toggleComplete = async (task: Task) => {

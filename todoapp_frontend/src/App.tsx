@@ -74,51 +74,81 @@ function App() {
     <div className="container">
       <h1 className="title">Task Manager</h1>
 
-      {/* Create Task */}
-      <form onSubmit={addTask} className="task-card">
-        <input
-          placeholder="Task title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
-        />
-        <br />
-        <br />
-        <input
-          placeholder="Description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
-        <br />
-        <br />
-        <button type="submit">Add Task</button>
+      {/* Add Task Card */}
+      <form onSubmit={addTask} className="create-card">
+        <div className="create-header">
+          <span className="create-icon">📝</span>
+          <h2>Create a Task</h2>
+        </div>
+
+        <div className="input-group">
+          <label>Task Title</label>
+          <input
+            placeholder="Enter task title..."
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            required
+          />
+        </div>
+
+        <div className="input-group">
+          <label>Description</label>
+          <input
+            placeholder="Optional description..."
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+        </div>
+
+        <div className="create-footer">
+          <button type="submit" className="add-btn">
+            Add Task
+          </button>
+        </div>
       </form>
+
+      {/* Empty State */}
+      {tasks.length === 0 && <div className="empty-state">No tasks yet</div>}
 
       {/* Task List */}
       {tasks.map((task) => (
         <div className="task-card" key={task.id}>
-          <h3 className="task-title">{task.title}</h3>
-          <p className="task-desc">{task.description}</p>
+          <div className="task-top">
+            <div className="task-left">
+              <input
+                type="checkbox"
+                checked={task.completed}
+                onChange={() => toggleComplete(task)}
+                className="checkbox"
+              />
 
-          <p className="task-meta">
-            Status:
-            <span className={task.completed ? "completed" : "not-completed"}>
-              {task.completed ? " Completed" : " Not Completed"}
-            </span>
-          </p>
+              <div>
+                <h3
+                  className={`task-title ${
+                    task.completed ? "completed-text" : ""
+                  }`}
+                >
+                  {task.title}
+                </h3>
 
-          <p className="task-meta">
+                <p className="task-desc">{task.description}</p>
+              </div>
+            </div>
+
+            <div className="task-actions">
+              <button className="edit-btn">✏️</button>
+              <button
+                className="delete-btn"
+                onClick={() => deleteTask(task.id)}
+              >
+                🗑️
+              </button>
+            </div>
+          </div>
+
+          <div className="task-footer">
             Created: {new Date(task.createdAt).toLocaleDateString()}
-          </p>
-
-          <button onClick={() => toggleComplete(task)}>Toggle Complete</button>
-
-          <button
-            style={{ marginLeft: "10px" }}
-            onClick={() => deleteTask(task.id)}
-          >
-            Delete
-          </button>
+          </div>
         </div>
       ))}
     </div>

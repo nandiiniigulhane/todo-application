@@ -14,6 +14,9 @@ function App() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
+  // New state to track which task is currently being edited
+  const [editingTaskId, setEditingTaskId] = useState<number | null>(null);
+
   const API_URL = "http://localhost:8080/tasks";
 
   const fetchTasks = () => {
@@ -27,47 +30,78 @@ function App() {
     fetchTasks();
   }, []);
 
-  const addTask = async (e: React.FormEvent) => {
+  // Unified function to handle both adding and updating
+  const saveTask = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    await fetch(API_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        title,
-        description,
-        completed: false,
-        createdAt: new Date().toISOString(),
-      }),
-    });
+    if (editingTaskId) {
+      // Find the existing task to preserve its 'completed' status
+      const existingTask = tasks.find((t) => t.id === editingTaskId);
 
+      await fetch(`${API_URL}/${editingTaskId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title,
+          description,
+          completed: existingTask ? existingTask.completed : false,
+        }),
+      });
+
+      // Clear edit state after saving
+      setEditingTaskId(null);
+    } else {
+      // Standard create logic
+      await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title,
+          description,
+          completed: false,
+          createdAt: new Date().toISOString(),
+        }),
+      });
+    }
+
+    // Reset inputs and refresh list
     setTitle("");
     setDescription("");
     fetchTasks();
+  };
+
+  // Triggered when the Edit button on a task card is clicked
+  const startEditing = (task: Task) => {
+    setEditingTaskId(task.id);
+    setTitle(task.title);
+    setDescription(task.description || "");
+    window.scrollTo({ top: 0, behavior: "smooth" }); // Smooth scroll to the form
+  };
+
+  // Allows the user to back out of editing mode
+  const cancelEditing = () => {
+    setEditingTaskId(null);
+    setTitle("");
+    setDescription("");
   };
 
   const deleteTask = async (id: number) => {
     await fetch(`${API_URL}/${id}`, {
       method: "DELETE",
     });
-
     setTasks((prev) => prev.filter((task) => task.id !== id));
   };
 
+  // Your toggleComplete already uses PUT perfectly alongside your backend
   const toggleComplete = async (task: Task) => {
     await fetch(`${API_URL}/${task.id}`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         ...task,
         completed: !task.completed,
       }),
     });
-
     fetchTasks();
   };
 
@@ -80,10 +114,11 @@ function App() {
         </p>
       </header>
 
-      <form onSubmit={addTask} className="create-card">
+      {/* Dynamic Form (Handles both Create and Update) */}
+      <form onSubmit={saveTask} className="create-card">
         <div className="create-header">
-          <div className="icon-wrapper">✨</div>
-          <h2>Create a Task</h2>
+          <div className="icon-wrapper">{editingTaskId ? "✏️" : "✨"}</div>
+          <h2>{editingTaskId ? "Edit Task" : "Create a Task"}</h2>
         </div>
 
         <div className="input-group">
@@ -108,12 +143,22 @@ function App() {
         </div>
 
         <div className="create-footer">
+          {editingTaskId && (
+            <button
+              type="button"
+              onClick={cancelEditing}
+              className="cancel-btn"
+            >
+              Cancel
+            </button>
+          )}
           <button type="submit" className="add-btn">
-            Add Task
+            {editingTaskId ? "Update Task" : "Add Task"}
           </button>
         </div>
       </form>
 
+      {/* Task List Section */}
       <div className="task-list-container">
         {tasks.length === 0 && (
           <div className="empty-state">
@@ -158,6 +203,7 @@ function App() {
                 <button
                   type="button"
                   className="action-btn edit-btn"
+                  onClick={() => startEditing(task)}
                   title="Edit task"
                 >
                   ✏️

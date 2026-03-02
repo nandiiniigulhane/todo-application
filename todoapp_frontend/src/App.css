@@ -325,3 +325,21 @@ body {
 .delete-btn:hover {
   background: var(--danger-bg);
 }
+
+.cancel-btn {
+  padding: 12px 24px;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-right: 12px;
+}
+
+.cancel-btn:hover {
+  background: #f1f5f9;
+  color: var(--text-primary);
+}

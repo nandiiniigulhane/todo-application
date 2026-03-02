@@ -52,7 +52,7 @@ public class TaskController {
     }
 
     @PostMapping("/tasks")
-    public ResponseEntity<TaskResponseDto> addTask(TaskRequestDtoCreate task) {
+    public ResponseEntity<TaskResponseDto> addTask(@RequestBody TaskRequestDtoCreate task) {
         TaskResponseDto response = taskService.addTask(task);
 
         if (response == null) {
